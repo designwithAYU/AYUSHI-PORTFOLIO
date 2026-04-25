@@ -1,80 +1,81 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useSpring } from "framer-motion";
 import {
+  ArrowUpRight,
   ArrowUp,
-  Code2,
   Github,
   Linkedin,
   Mail,
   MapPin,
   Menu,
   Phone,
-  Sparkles,
   X,
-  ExternalLink,
-  GraduationCap,
-  Briefcase,
-  Heart,
+  Sparkle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 const NAV = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "skills", label: "Skills" },
-  { id: "projects", label: "Projects" },
-  { id: "experience", label: "Experience" },
-  { id: "education", label: "Education" },
-  { id: "contact", label: "Contact" },
+  { id: "about", label: "About", n: "01" },
+  { id: "skills", label: "Skills", n: "02" },
+  { id: "projects", label: "Work", n: "03" },
+  { id: "experience", label: "Experience", n: "04" },
+  { id: "contact", label: "Contact", n: "05" },
 ];
 
 const SKILLS = [
   { category: "Frontend", items: ["HTML", "CSS", "JavaScript"] },
-  { category: "Tools", items: ["VS Code", "Git (basic)", "Figma"] },
+  { category: "Tools", items: ["VS Code", "Git", "Figma"] },
   { category: "Concepts", items: ["Responsive Design", "DOM Manipulation"] },
   { category: "Networking", items: ["Subnetting", "Routing"] },
 ];
 
 const PROJECTS = [
   {
+    no: "01",
+    year: "2025",
     title: "Zivara",
     subtitle: "Mental Wellness App",
     description:
-      "A responsive frontend interface for a mental wellness experience, built with Flexbox & Grid and a strong focus on UI/UX and visual hierarchy.",
-    tech: ["HTML", "CSS", "JavaScript", "Flexbox", "Grid"],
+      "A responsive frontend interface centered on calm, clarity, and care. Built with Flexbox & Grid, with attention paid to typographic rhythm and visual hierarchy.",
+    tech: ["HTML", "CSS", "JavaScript", "UI/UX"],
     github: "#",
     demo: "#",
   },
   {
+    no: "02",
+    year: "2024",
     title: "Honeypot",
-    subtitle: "Security-Based Project",
+    subtitle: "Security Research",
     description:
-      "A basic honeypot system that monitors unauthorized access attempts, exploring network security fundamentals and intrusion detection.",
+      "A basic honeypot system that monitors and logs unauthorized access attempts — a hands-on study of network security fundamentals and intrusion detection.",
     tech: ["Networking", "Security", "Python"],
     github: "#",
     demo: "#",
   },
 ];
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
+const TICKER = [
+  "Frontend Developer",
+  "Computer Science Student",
+  "UI Enthusiast",
+  "Open to Opportunities",
+  "Based in Ghaziabad",
+];
 
 const Index = () => {
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showTop, setShowTop] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 20);
-      setShowTop(window.scrollY > 400);
+      setShowTop(window.scrollY > 600);
     };
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
@@ -92,12 +93,11 @@ const Index = () => {
     const name = String(data.get("name") || "").trim();
     const email = String(data.get("email") || "").trim();
     const message = String(data.get("message") || "").trim();
-
     if (!name || !email || !message) {
-      toast.error("Please fill in all fields.");
+      toast.error("Please complete every field.");
       return;
     }
-    const subject = encodeURIComponent(`Portfolio contact from ${name}`);
+    const subject = encodeURIComponent(`Portfolio enquiry from ${name}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
     window.location.href = `mailto:ayushi.110718@gmail.com?subject=${subject}&body=${body}`;
     toast.success("Opening your email app…");
@@ -105,46 +105,53 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+    <div className="min-h-screen bg-background text-ink overflow-x-hidden selection:bg-primary selection:text-primary-foreground">
+      {/* Scroll progress */}
+      <motion.div
+        style={{ scaleX }}
+        className="fixed top-0 left-0 right-0 h-[2px] bg-primary origin-left z-[60]"
+      />
+
       {/* NAVBAR */}
       <header
         className={`fixed top-0 inset-x-0 z-50 transition-smooth ${
-          scrolled ? "glass shadow-soft" : "bg-transparent"
+          scrolled ? "glass border-b border-border/60" : "bg-transparent"
         }`}
       >
-        <nav className="container mx-auto flex items-center justify-between py-4 px-4">
+        <nav className="container mx-auto flex items-center justify-between py-5 px-6 lg:px-12">
           <button
-            onClick={() => scrollTo("home")}
-            className="flex items-center gap-2 font-bold text-lg"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-2.5 group"
           >
-            <span className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center shadow-soft">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
+            <span className="w-2.5 h-2.5 rounded-full bg-primary group-hover:scale-125 transition-smooth" />
+            <span className="font-serif-display text-xl font-medium tracking-tight">
+              Ayushi<span className="text-primary">.</span>
             </span>
-            Ayushi
           </button>
 
-          <ul className="hidden md:flex items-center gap-7 text-sm font-medium">
+          <ul className="hidden md:flex items-center gap-8 font-mono-tech text-[11px] uppercase tracking-[0.18em]">
             {NAV.map((n) => (
               <li key={n.id}>
                 <button
                   onClick={() => scrollTo(n.id)}
-                  className="text-foreground/70 hover:text-primary transition-smooth"
+                  className="group inline-flex items-baseline gap-1.5 text-ink/60 hover:text-primary transition-smooth"
                 >
-                  {n.label}
+                  <span className="text-primary/50 group-hover:text-primary">{n.n}</span>
+                  <span>{n.label}</span>
                 </button>
               </li>
             ))}
           </ul>
 
-          <Button
-            onClick={() => scrollTo("contact")}
-            className="hidden md:inline-flex bg-gradient-primary hover:opacity-90 text-primary-foreground shadow-soft"
+          <a
+            href="mailto:ayushi.110718@gmail.com"
+            className="hidden md:inline-flex items-center gap-1.5 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink hover:text-primary transition-smooth"
           >
-            Hire Me
-          </Button>
+            Let's talk <ArrowUpRight className="w-3.5 h-3.5" />
+          </a>
 
           <button
-            className="md:hidden p-2 rounded-md hover:bg-secondary transition-smooth"
+            className="md:hidden p-2 -mr-2 rounded-md hover:bg-blush transition-smooth"
             onClick={() => setNavOpen((s) => !s)}
             aria-label="Toggle menu"
           >
@@ -154,14 +161,14 @@ const Index = () => {
 
         {navOpen && (
           <div className="md:hidden glass border-t border-border">
-            <ul className="container mx-auto px-4 py-4 flex flex-col gap-3">
+            <ul className="container mx-auto px-6 py-6 flex flex-col gap-4 font-mono-tech text-xs uppercase tracking-[0.18em]">
               {NAV.map((n) => (
                 <li key={n.id}>
                   <button
                     onClick={() => scrollTo(n.id)}
-                    className="w-full text-left py-2 text-foreground/80 hover:text-primary"
+                    className="w-full text-left flex items-baseline gap-3 text-ink/80 hover:text-primary"
                   >
-                    {n.label}
+                    <span className="text-primary/50">{n.n}</span> {n.label}
                   </button>
                 </li>
               ))}
@@ -171,307 +178,374 @@ const Index = () => {
       </header>
 
       {/* HERO */}
-      <section
-        id="home"
-        className="relative min-h-screen flex items-center bg-gradient-hero pt-24"
-      >
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-primary/30 blur-3xl animate-float" />
-        <div className="absolute bottom-10 -left-10 w-72 h-72 rounded-full bg-primary-glow/40 blur-3xl animate-float" />
+      <section className="relative min-h-screen flex flex-col justify-center pt-32 pb-16 noise overflow-hidden">
+        {/* decorative blobs */}
+        <div className="absolute top-20 right-[-10%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-blush blur-3xl opacity-70 -z-10" />
+        <div className="absolute bottom-0 left-[-15%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] rounded-full bg-blush-deep blur-3xl opacity-50 -z-10" />
 
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative z-10">
-          <motion.div initial="hidden" animate="show" variants={fadeUp}>
-            <Badge className="mb-5 bg-secondary text-secondary-foreground border-0">
-              <Heart className="w-3 h-3 mr-1.5" /> Welcome to my portfolio
-            </Badge>
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-5">
-              Hi, I'm{" "}
-              <span className="bg-gradient-primary bg-clip-text text-transparent">
-                Ayushi
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-foreground/80 font-medium mb-3">
-              Frontend Developer · Computer Science Student
-            </p>
-            <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-lg">
-              Building responsive and user-friendly web experiences with care for
-              design, accessibility, and clean code.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                size="lg"
-                onClick={() => scrollTo("projects")}
-                className="bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-soft hover:shadow-glow transition-smooth"
-              >
-                View Projects
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => scrollTo("contact")}
-                className="border-primary/40 hover:bg-primary/10 transition-smooth"
-              >
-                Contact Me
-              </Button>
-            </div>
-          </motion.div>
-
+        <div className="container mx-auto px-6 lg:px-12 relative">
+          {/* Top meta row */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="hidden md:flex justify-center"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-wrap items-center justify-between gap-4 mb-12 font-mono-tech text-[11px] uppercase tracking-[0.2em] text-ink/60"
           >
-            <div className="relative">
-              <div className="w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-gradient-primary shadow-glow flex items-center justify-center animate-float">
-                <div className="w-64 h-64 lg:w-80 lg:h-80 rounded-full glass flex items-center justify-center text-7xl font-extrabold text-primary">
-                  A
-                </div>
-              </div>
-              <div className="absolute -bottom-2 -right-2 glass rounded-2xl p-4 shadow-soft">
-                <Code2 className="w-6 h-6 text-primary" />
-              </div>
-            </div>
+            <span>Portfolio / 2025</span>
+            <span className="hidden sm:inline">Ghaziabad, India · 28.66°N 77.45°E</span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Available for work
+            </span>
           </motion.div>
+
+          {/* Title */}
+          <div className="grid lg:grid-cols-12 gap-8 items-end">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:col-span-9"
+            >
+              <h1 className="font-serif-display text-[15vw] md:text-[10vw] lg:text-[9rem] leading-[0.92] font-medium tracking-tighter">
+                Ayushi
+                <span className="inline-block align-top text-primary">.</span>
+              </h1>
+              <h2 className="font-serif-display italic text-3xl md:text-5xl lg:text-6xl text-ink/70 mt-2 leading-tight">
+                a frontend storyteller<span className="text-primary not-italic">,</span>
+                <br className="hidden sm:block" />
+                <span className="ml-0 sm:ml-12">crafting calm interfaces.</span>
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.3 }}
+              className="lg:col-span-3 lg:pl-6 lg:border-l border-border space-y-5"
+            >
+              <p className="text-sm text-ink/70 leading-relaxed">
+                Computer Science student building responsive, user-friendly web
+                experiences with care for design, accessibility, and clean code.
+              </p>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={() => scrollTo("projects")}
+                  className="group justify-between rounded-none bg-ink text-background hover:bg-primary text-xs font-mono-tech uppercase tracking-[0.2em] h-12"
+                >
+                  View Work
+                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-smooth" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => scrollTo("contact")}
+                  className="group justify-between rounded-none border-ink/20 hover:border-primary hover:text-primary text-xs font-mono-tech uppercase tracking-[0.2em] h-12 bg-transparent"
+                >
+                  Contact
+                  <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-smooth" />
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Marquee */}
+        <div className="mt-20 border-y border-border bg-background/50 overflow-hidden">
+          <div className="flex marquee whitespace-nowrap py-4">
+            {[...TICKER, ...TICKER, ...TICKER, ...TICKER].map((t, i) => (
+              <span
+                key={i}
+                className="font-serif-display italic text-2xl md:text-3xl text-ink/80 px-8 inline-flex items-center gap-8"
+              >
+                {t}
+                <Sparkle className="w-5 h-5 text-primary fill-primary" />
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ABOUT */}
-      <Section id="about" title="About Me" eyebrow="Who I am">
-        <div className="grid md:grid-cols-3 gap-8 items-start">
+      <Section id="about" no="01" label="About">
+        <div className="grid lg:grid-cols-12 gap-10">
           <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="md:col-span-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="lg:col-span-7 lg:col-start-2"
           >
-            <p className="text-lg text-foreground/80 leading-relaxed mb-4">
-              I'm a motivated computer science student with a strong foundation in{" "}
-              <span className="text-primary font-semibold">frontend development</span>.
-              I enjoy crafting interfaces that are clean, responsive, and easy to use.
+            <p className="font-serif-display text-3xl md:text-4xl lg:text-5xl leading-[1.15] tracking-tight text-ink">
+              I'm a motivated{" "}
+              <span className="italic text-primary">computer science</span> student
+              with a strong foundation in frontend development — drawn to{" "}
+              <span className="italic">clean design</span>, real usability, and
+              interfaces that respect the people who use them.
             </p>
-            <p className="text-lg text-foreground/80 leading-relaxed">
-              Skilled in HTML, CSS, and JavaScript, I focus on usability and visual
-              clarity. I'm a quick learner, always curious, and eager to contribute
-              to real-world projects that make an impact.
+            <p className="mt-8 text-ink/70 leading-relaxed max-w-2xl">
+              I work primarily with HTML, CSS, and JavaScript, and I'm a quick
+              learner who's eager to contribute to real-world projects. I care
+              about typography, hierarchy, and the small details that make a
+              product feel considered.
             </p>
           </motion.div>
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
+          <motion.aside
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.15 }}
+            className="lg:col-span-3 space-y-5 font-mono-tech text-[11px] uppercase tracking-[0.18em]"
           >
-            <Card className="p-6 glass border-primary/20 shadow-soft">
-              <h3 className="font-semibold mb-3 text-primary">Quick Facts</h3>
-              <ul className="space-y-2 text-sm text-foreground/80">
-                <li>🎓 B.Tech CSE Student</li>
-                <li>💻 Frontend Focused</li>
-                <li>📍 Ghaziabad, India</li>
-                <li>✨ Open to opportunities</li>
-              </ul>
-            </Card>
-          </motion.div>
+            <FactRow k="Role" v="Frontend Dev" />
+            <FactRow k="Studying" v="B.Tech CSE" />
+            <FactRow k="Location" v="Ghaziabad, IN" />
+            <FactRow k="Status" v="Open to work" highlight />
+          </motion.aside>
         </div>
       </Section>
 
       {/* SKILLS */}
-      <Section id="skills" title="Skills" eyebrow="What I work with" tinted>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <Section id="skills" no="02" label="Skills" tinted>
+        <div className="divide-y divide-border border-y border-border">
           {SKILLS.map((s, i) => (
             <motion.div
               key={s.category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.6, delay: i * 0.08 }}
+              className="group grid grid-cols-12 gap-4 py-6 md:py-8 hover:bg-background/60 transition-smooth px-2 md:px-4"
             >
-              <Card className="p-6 h-full bg-card/80 backdrop-blur border-primary/10 hover:border-primary/40 hover:shadow-glow hover:-translate-y-1 transition-smooth">
-                <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center mb-4 shadow-soft">
-                  <Code2 className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <h3 className="font-semibold mb-3">{s.category}</h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {s.items.map((item) => (
-                    <Badge
-                      key={item}
-                      variant="secondary"
-                      className="bg-secondary/70 text-secondary-foreground hover:bg-primary hover:text-primary-foreground transition-smooth"
-                    >
-                      {item}
-                    </Badge>
-                  ))}
-                </div>
-              </Card>
+              <span className="col-span-2 md:col-span-1 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink/40 pt-1.5">
+                0{i + 1}
+              </span>
+              <h3 className="col-span-10 md:col-span-4 font-serif-display text-2xl md:text-3xl text-ink group-hover:text-primary transition-smooth">
+                {s.category}
+              </h3>
+              <div className="col-span-12 md:col-span-7 flex flex-wrap gap-2 items-center">
+                {s.items.map((item) => (
+                  <span
+                    key={item}
+                    className="font-mono-tech text-xs uppercase tracking-[0.14em] px-3 py-1.5 border border-ink/15 rounded-full bg-background hover:border-primary hover:text-primary transition-smooth"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </motion.div>
           ))}
         </div>
       </Section>
 
       {/* PROJECTS */}
-      <Section id="projects" title="Projects" eyebrow="Things I've built">
-        <div className="grid md:grid-cols-2 gap-6">
+      <Section id="projects" no="03" label="Selected Work">
+        <div className="space-y-16 md:space-y-24">
           {PROJECTS.map((p, i) => (
-            <motion.div
+            <motion.article
               key={p.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.15 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8 }}
+              className={`grid lg:grid-cols-12 gap-6 lg:gap-10 items-start ${
+                i % 2 === 1 ? "lg:[&>*:first-child]:order-2" : ""
+              }`}
             >
-              <Card className="group p-7 h-full bg-card border-primary/10 hover:border-primary/40 hover:shadow-glow hover:-translate-y-2 transition-smooth overflow-hidden relative">
-                <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-smooth" />
-                <div className="relative">
-                  <p className="text-xs font-semibold text-primary uppercase tracking-wider mb-2">
-                    {p.subtitle}
-                  </p>
-                  <h3 className="text-2xl font-bold mb-3">{p.title}</h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
-                    {p.description}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5 mb-5">
-                    {p.tech.map((t) => (
-                      <Badge key={t} variant="outline" className="border-primary/30">
-                        {t}
-                      </Badge>
-                    ))}
+              {/* Visual */}
+              <div className="lg:col-span-7 group relative">
+                <div className="aspect-[4/3] relative overflow-hidden bg-blush rounded-sm">
+                  <div className="absolute inset-0 bg-gradient-blush" />
+                  <div className="absolute inset-0 noise opacity-60" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="font-serif-display text-[18vw] lg:text-[10rem] leading-none text-primary/20 group-hover:text-primary/40 group-hover:scale-110 transition-smooth duration-700">
+                      {p.no}
+                    </span>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      asChild
-                      className="border-primary/40 hover:bg-primary hover:text-primary-foreground transition-smooth"
-                    >
-                      <a href={p.github} target="_blank" rel="noreferrer">
-                        <Github className="w-4 h-4 mr-1.5" /> Code
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      asChild
-                      className="bg-gradient-primary text-primary-foreground hover:opacity-90"
-                    >
-                      <a href={p.demo} target="_blank" rel="noreferrer">
-                        <ExternalLink className="w-4 h-4 mr-1.5" /> Demo
-                      </a>
-                    </Button>
+                  <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                    <span className="font-serif-display text-2xl md:text-3xl text-ink">
+                      {p.title}
+                    </span>
+                    <span className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink/60">
+                      {p.year}
+                    </span>
                   </div>
                 </div>
-              </Card>
-            </motion.div>
+              </div>
+              {/* Text */}
+              <div className="lg:col-span-5 space-y-5">
+                <div className="flex items-center gap-3 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink/50">
+                  <span>{p.no}</span>
+                  <span className="h-px flex-1 bg-border" />
+                  <span>{p.subtitle}</span>
+                </div>
+                <h3 className="font-serif-display text-4xl md:text-5xl tracking-tight">
+                  {p.title}
+                </h3>
+                <p className="text-ink/70 leading-relaxed">{p.description}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {p.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="font-mono-tech text-[10px] uppercase tracking-[0.16em] px-2.5 py-1 border border-ink/15 text-ink/70"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <a
+                    href={p.github}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex items-center gap-1.5 font-mono-tech text-[11px] uppercase tracking-[0.2em] border-b border-ink/30 pb-1 hover:border-primary hover:text-primary transition-smooth"
+                  >
+                    <Github className="w-3.5 h-3.5" /> Code
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:rotate-45 transition-smooth" />
+                  </a>
+                  <a
+                    href={p.demo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group inline-flex items-center gap-1.5 font-mono-tech text-[11px] uppercase tracking-[0.2em] border-b border-ink/30 pb-1 hover:border-primary hover:text-primary transition-smooth"
+                  >
+                    Live Demo
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:rotate-45 transition-smooth" />
+                  </a>
+                </div>
+              </div>
+            </motion.article>
           ))}
         </div>
       </Section>
 
-      {/* EXPERIENCE */}
-      <Section id="experience" title="Experience" eyebrow="My journey" tinted>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <Card className="p-7 glass border-primary/20 shadow-soft max-w-3xl">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft shrink-0">
-                <Briefcase className="w-6 h-6 text-primary-foreground" />
+      {/* EXPERIENCE + EDUCATION */}
+      <Section id="experience" no="04" label="Experience & Education" tinted>
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="font-mono-tech text-[11px] uppercase tracking-[0.2em] text-primary mb-4">
+              — Experience
+            </p>
+            <div className="border-l-2 border-primary/30 pl-6 space-y-2">
+              <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                <h3 className="font-serif-display text-2xl md:text-3xl">
+                  SparkxYouth
+                </h3>
+                <span className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink/60">
+                  Intern · Virtual
+                </span>
               </div>
-              <div>
-                <h3 className="text-xl font-bold">Intern — SparkxYouth</h3>
-                <p className="text-sm text-primary font-medium mb-3">
-                  Virtual Internship
-                </p>
-                <ul className="space-y-1.5 text-foreground/80 text-sm md:text-base">
-                  <li>• Managed social media content</li>
-                  <li>• Planned and scheduled posts</li>
-                  <li>• Developed communication and teamwork skills</li>
-                  <li>• Improved time management</li>
-                </ul>
-              </div>
+              <ul className="text-ink/70 leading-relaxed space-y-1.5 pt-2">
+                <li>— Managed social media content & scheduling</li>
+                <li>— Planned and executed weekly post calendars</li>
+                <li>— Built communication and teamwork muscle</li>
+                <li>— Refined time management under deadlines</li>
+              </ul>
             </div>
-          </Card>
-        </motion.div>
-      </Section>
+          </motion.div>
 
-      {/* EDUCATION */}
-      <Section id="education" title="Education" eyebrow="My foundation">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <Card className="p-7 border-primary/20 shadow-soft max-w-3xl bg-card">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-soft shrink-0">
-                <GraduationCap className="w-6 h-6 text-primary-foreground" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+          >
+            <p className="font-mono-tech text-[11px] uppercase tracking-[0.2em] text-primary mb-4">
+              — Education
+            </p>
+            <div className="border-l-2 border-primary/30 pl-6 space-y-2">
+              <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                <h3 className="font-serif-display text-2xl md:text-3xl">
+                  B.Tech, Computer Science
+                </h3>
+                <span className="font-mono-tech text-[11px] uppercase tracking-[0.18em] text-ink/60">
+                  Ongoing
+                </span>
               </div>
-              <div>
-                <h3 className="text-xl font-bold">B.Tech in Computer Science</h3>
-                <p className="text-primary font-medium">
-                  IMS Engineering College, Ghaziabad
-                </p>
-              </div>
+              <p className="text-ink/70 leading-relaxed pt-2">
+                IMS Engineering College, Ghaziabad
+              </p>
+              <p className="text-ink/60 text-sm leading-relaxed">
+                Coursework spans web development, data structures, networking
+                (subnetting & routing), and computer systems fundamentals.
+              </p>
             </div>
-          </Card>
-        </motion.div>
+          </motion.div>
+        </div>
       </Section>
 
       {/* CONTACT */}
-      <Section id="contact" title="Get in Touch" eyebrow="Let's connect" tinted>
-        <div className="grid md:grid-cols-2 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="space-y-4"
-          >
-            <p className="text-foreground/80 mb-6">
-              I'd love to hear about opportunities, collaborations, or just to chat.
-              Reach out through any of these channels:
-            </p>
-            <ContactRow icon={<Phone className="w-5 h-5" />} label="Phone" value="+91 7505549628" href="tel:+917505549628" />
-            <ContactRow icon={<Mail className="w-5 h-5" />} label="Email" value="ayushi.110718@gmail.com" href="mailto:ayushi.110718@gmail.com" />
-            <ContactRow icon={<MapPin className="w-5 h-5" />} label="Location" value="Ghaziabad, India" />
-          </motion.div>
+      <Section id="contact" no="05" label="Contact">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <p className="font-serif-display italic text-3xl md:text-5xl lg:text-6xl leading-tight tracking-tight max-w-4xl mx-auto">
+            Have a project in mind, or just want to say hi?{" "}
+            <span className="text-primary not-italic">Let's talk.</span>
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-5 space-y-3">
+            <ContactRow icon={<Mail className="w-4 h-4" />} label="Email" value="ayushi.110718@gmail.com" href="mailto:ayushi.110718@gmail.com" />
+            <ContactRow icon={<Phone className="w-4 h-4" />} label="Phone" value="+91 75055 49628" href="tel:+917505549628" />
+            <ContactRow icon={<MapPin className="w-4 h-4" />} label="Location" value="Ghaziabad, India" />
+            <div className="pt-4 flex gap-3">
+              <SocialLink href="https://linkedin.com" label="LinkedIn">
+                <Linkedin className="w-4 h-4" />
+              </SocialLink>
+              <SocialLink href="https://github.com" label="GitHub">
+                <Github className="w-4 h-4" />
+              </SocialLink>
+            </div>
+          </div>
 
           <motion.form
             onSubmit={handleSubmit}
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass p-6 rounded-2xl border border-primary/20 shadow-soft space-y-4"
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="lg:col-span-7 space-y-5"
           >
-            <Input name="name" placeholder="Your name" className="bg-background/70" required />
-            <Input name="email" type="email" placeholder="Your email" className="bg-background/70" required />
-            <Textarea name="message" placeholder="Your message" rows={5} className="bg-background/70" required />
+            <FormField label="01 / Your name">
+              <Input name="name" placeholder="Jane Doe" required className="rounded-none border-0 border-b border-ink/20 focus-visible:ring-0 focus-visible:border-primary px-0 bg-transparent text-lg h-12" />
+            </FormField>
+            <FormField label="02 / Email">
+              <Input name="email" type="email" placeholder="jane@studio.com" required className="rounded-none border-0 border-b border-ink/20 focus-visible:ring-0 focus-visible:border-primary px-0 bg-transparent text-lg h-12" />
+            </FormField>
+            <FormField label="03 / Message">
+              <Textarea name="message" rows={4} placeholder="Tell me a little about your idea…" required className="rounded-none border-0 border-b border-ink/20 focus-visible:ring-0 focus-visible:border-primary px-0 bg-transparent text-base resize-none" />
+            </FormField>
             <Button
               type="submit"
-              className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90 shadow-soft"
+              className="group w-full md:w-auto rounded-none bg-ink text-background hover:bg-primary px-8 h-14 font-mono-tech text-xs uppercase tracking-[0.2em] inline-flex items-center gap-3 mt-4"
             >
               Send Message
+              <ArrowUpRight className="w-4 h-4 group-hover:rotate-45 transition-smooth" />
             </Button>
           </motion.form>
         </div>
       </Section>
 
       {/* FOOTER */}
-      <footer className="border-t border-border bg-secondary/40">
-        <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Ayushi. Crafted with{" "}
-            <Heart className="inline w-3.5 h-3.5 text-primary fill-primary" /> in Ghaziabad.
-          </p>
-          <div className="flex gap-2">
-            <Button asChild size="icon" variant="ghost" className="hover:bg-primary hover:text-primary-foreground rounded-full">
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-                <Linkedin className="w-4 h-4" />
-              </a>
-            </Button>
-            <Button asChild size="icon" variant="ghost" className="hover:bg-primary hover:text-primary-foreground rounded-full">
-              <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub">
-                <Github className="w-4 h-4" />
-              </a>
-            </Button>
+      <footer className="bg-ink text-background relative overflow-hidden">
+        <div className="absolute inset-0 noise opacity-30" />
+        <div className="container mx-auto px-6 lg:px-12 py-16 relative">
+          <div className="font-serif-display text-[18vw] md:text-[14vw] lg:text-[10rem] leading-[0.9] tracking-tighter">
+            Ayushi<span className="text-primary">.</span>
+          </div>
+          <div className="mt-10 pt-6 border-t border-background/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono-tech text-[11px] uppercase tracking-[0.18em] text-background/60">
+            <span>© {new Date().getFullYear()} Ayushi — All rights reserved</span>
+            <span>Designed & built with care · Ghaziabad, IN</span>
           </div>
         </div>
       </footer>
@@ -480,59 +554,61 @@ const Index = () => {
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-gradient-primary text-primary-foreground shadow-glow flex items-center justify-center hover:scale-110 transition-smooth"
+          className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-ink text-background shadow-soft hover:bg-primary flex items-center justify-center hover:scale-110 transition-smooth"
           aria-label="Scroll to top"
         >
-          <ArrowUp className="w-5 h-5" />
+          <ArrowUp className="w-4 h-4" />
         </button>
       )}
     </div>
   );
 };
 
+/* ---------- helpers ---------- */
+
 const Section = ({
   id,
-  title,
-  eyebrow,
+  no,
+  label,
   children,
   tinted,
 }: {
   id: string;
-  title: string;
-  eyebrow: string;
+  no: string;
+  label: string;
   children: React.ReactNode;
   tinted?: boolean;
 }) => (
-  <section id={id} className={`py-20 md:py-28 ${tinted ? "bg-secondary/30" : ""}`}>
-    <div className="container mx-auto px-4">
+  <section id={id} className={`relative py-24 md:py-36 ${tinted ? "bg-blush/40" : ""}`}>
+    <div className="container mx-auto px-6 lg:px-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="mb-12 text-center"
+        transition={{ duration: 0.6 }}
+        className="flex items-baseline gap-4 mb-12 md:mb-20"
       >
-        <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-2">
-          {eyebrow}
-        </p>
-        <h2 className="text-4xl md:text-5xl font-extrabold">
-          {title.split(" ").map((w, i) => (
-            <span key={i}>
-              {i === title.split(" ").length - 1 ? (
-                <span className="bg-gradient-primary bg-clip-text text-transparent">
-                  {w}
-                </span>
-              ) : (
-                <>{w} </>
-              )}
-            </span>
-          ))}
+        <span className="font-mono-tech text-[11px] uppercase tracking-[0.2em] text-primary">
+          {no}
+        </span>
+        <span className="h-px flex-1 bg-ink/15" />
+        <h2 className="font-serif-display text-2xl md:text-3xl tracking-tight">
+          {label}
         </h2>
-        <div className="w-16 h-1 bg-gradient-primary rounded-full mx-auto mt-4" />
       </motion.div>
       {children}
     </div>
   </section>
+);
+
+const FactRow = ({ k, v, highlight }: { k: string; v: string; highlight?: boolean }) => (
+  <div className="flex items-center justify-between border-b border-border pb-3">
+    <span className="text-ink/40">{k}</span>
+    <span className={`${highlight ? "text-primary" : "text-ink"} inline-flex items-center gap-1.5`}>
+      {highlight && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
+      {v}
+    </span>
+  </div>
 );
 
 const ContactRow = ({
@@ -547,23 +623,61 @@ const ContactRow = ({
   href?: string;
 }) => {
   const inner = (
-    <Card className="p-4 glass border-primary/20 hover:border-primary/50 hover:-translate-y-0.5 transition-smooth flex items-center gap-4">
-      <div className="w-10 h-10 rounded-xl bg-gradient-primary text-primary-foreground flex items-center justify-center shadow-soft">
-        {icon}
+    <div className="group flex items-center justify-between py-4 border-b border-ink/15 hover:border-primary transition-smooth">
+      <div className="flex items-center gap-4">
+        <span className="w-8 h-8 rounded-full bg-blush flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-smooth">
+          {icon}
+        </span>
+        <div>
+          <p className="font-mono-tech text-[10px] uppercase tracking-[0.18em] text-ink/50">
+            {label}
+          </p>
+          <p className="text-ink group-hover:text-primary transition-smooth">{value}</p>
+        </div>
       </div>
-      <div>
-        <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-        <p className="font-medium">{value}</p>
-      </div>
-    </Card>
+      {href && (
+        <ArrowUpRight className="w-4 h-4 text-ink/40 group-hover:text-primary group-hover:rotate-45 transition-smooth" />
+      )}
+    </div>
   );
-  return href ? (
-    <a href={href} className="block">
-      {inner}
-    </a>
-  ) : (
-    inner
-  );
+  return href ? <a href={href} className="block">{inner}</a> : inner;
 };
+
+const SocialLink = ({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    aria-label={label}
+    className="group inline-flex items-center gap-2 font-mono-tech text-[11px] uppercase tracking-[0.2em] border border-ink/15 hover:border-primary hover:text-primary px-4 py-2.5 transition-smooth"
+  >
+    {children}
+    {label}
+    <ArrowUpRight className="w-3 h-3 group-hover:rotate-45 transition-smooth" />
+  </a>
+);
+
+const FormField = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div>
+    <label className="font-mono-tech text-[10px] uppercase tracking-[0.2em] text-ink/50 block mb-1">
+      {label}
+    </label>
+    {children}
+  </div>
+);
 
 export default Index;
